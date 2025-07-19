@@ -6,7 +6,7 @@ import sqlite3
 import hashlib
 from pathlib import Path
 
-db_file_path = Path("data/app.db")
+db_file_path = Path("database/artefact.db")
 
 def hash_user_password(user_password):
     """to secure password I use SHA-256."""

@@ -3,8 +3,8 @@ This file is the main entry point of the project
 developer: Aldana Alsada
 """
 
-from app.auth import login_user
-from app.artefact import ArtefactManagerClass
+from app.manage_authentication import login_user
+from app.manage_artefact import ArtefactManagerClass
 
 def main():
     """This the main method"""

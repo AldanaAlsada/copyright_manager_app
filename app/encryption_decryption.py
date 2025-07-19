@@ -6,7 +6,7 @@ this method in this file is learned from w3school and some online forums
 from cryptography.fernet import Fernet
 import os
 
-encryption_keyfile = "data/encryption.key"
+encryption_keyfile = "database/encrypt.key"
 
 def create_key():
     """create the key"""
@@ -24,7 +24,7 @@ def load_key_file():
 ENCRYPT_CIPHER = Fernet(load_key_file()) # w3school
 
 def encrypt_data(data_to_encrypt):
-    """now encrypt the data using encrypt method"""
+    """now encrypt the database using encrypt method"""
     return ENCRYPT_CIPHER.encrypt(data_to_encrypt)
 
 def decrypt_data(security_token):

@@ -6,12 +6,12 @@ upload_file, view_file, delete_file and rename
 import sqlite3
 from pathlib import Path
 import os
-from app.encryption import encrypt_data, decrypt_data
+from app.encryption_decryption import encrypt_data, decrypt_data
 from app.checksum import create_checksum
 from app.timestamp import timestamp_current_today
 
-database_filepath = Path("data/app.db")
-storefile_path = Path("storage/")
+database_filepath = Path("database/artefact.db")
+storefile_path = Path("artefacts_storage/")
 
 class ArtefactManagerClass:
     """this class is for CRUD operations also I did encryption and rolebased in the same class."""
@@ -45,7 +45,7 @@ class ArtefactManagerClass:
         artefact_checksum = create_checksum(artefact_content) #checksum w3school
         artefact_timestamp = timestamp_current_today() #timestamp w3school
 
-        encrypted_file_path = storefile_path / f"{artefact_identifier}{path.suffix}.enc" #create storage path and add enc
+        encrypted_file_path = storefile_path / f"{artefact_identifier}{path.suffix}.enc" #create artefacts_storage path and add enc
         with open(encrypted_file_path, "wb") as artefactfile: #write encrypted file
             artefactfile.write(encrypted_artefact)
 
@@ -86,7 +86,7 @@ class ArtefactManagerClass:
                 print(f"Timestamp = {art['timestamp']}")
                 try:
                     with open(art['filename'], "rb") as encrypted_file:
-                        decrypted_file = decrypt_data(encrypted_file.read()) #decrypt data
+                        decrypted_file = decrypt_data(encrypted_file.read()) #decrypt database
                         print("Artefact Preview:", decrypted_file[:100].decode(errors='ignore'))
                 except Exception as e:
                     print("Failed to decrypt:", e)
