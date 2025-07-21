@@ -9,6 +9,7 @@ import os
 from app.encryption_decryption import encrypt_data, decrypt_data
 from app.checksum import create_checksum
 from app.timestamp import timestamp_current_today
+from datetime import datetime
 
 database_filepath = Path("database/artefact.db")
 storefile_path = Path("artefacts_storage/")
@@ -121,9 +122,10 @@ class ArtefactManagerClass:
             print("Title updated successfully.")
     def delete_file(self):
         """only admins can delete_file"""
-        if self.user['role'] != 'admin':
-            print("This functionality is only restricted to admins.")
-            return
+      #  if self.user['role'] != 'admin':
+       #     print("This functionality is only restricted to admins.")
+        #    return
+        # user should only be able to delete their own files
 
         file_id = input("Enter the ID for the file you want to delete: ").strip()
 
@@ -133,7 +135,14 @@ class ArtefactManagerClass:
             result = connection_cursor.fetchone()
 
             if result:
+                connection_cursor.execute("SELECT owner_id FROM artefacts WHERE id = ?", (file_id,))
+                results = connection_cursor.fetchone()
+                artefact_owner = results[0]
+                if self.user['role'] != 'admin' and artefact_owner != self.user['id']:
+                    print("Your access is only readonly you can't modify it.")
+                    return
                 file_path = result[0]
+
                 try:
                     os.remove(file_path)
                     print("The file has been deleted successfully.")
@@ -143,5 +152,11 @@ class ArtefactManagerClass:
                 connection_cursor.execute("DELETE FROM artefacts WHERE id = ?", (file_id,))
                 db_connection.commit()
                 print("The file has been deleted from database successfully.")
+
+                # log the username in the log file
+                entry_for_log = f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - Logged in user is: {self.user['username'] } - File ID is: {file_id}\n"
+                with open("logs/deletion_logs.txt", "a", encoding="utf-8") as f:
+                    f.write(entry_for_log)
+
             else:
                 print("The ID is incorrect.")
